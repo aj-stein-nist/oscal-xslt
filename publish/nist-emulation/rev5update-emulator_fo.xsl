@@ -111,6 +111,8 @@ TO DO:
     </fo:table>
   </xsl:template>
   
+  <xsl:template match="p[span[@class='inline-head']][. = 'Related controls: None.']"/>
+  
   <xsl:template priority="5" match="section[@class='group']/details/div[contains-token(@class,'overview')]">
     <fo:block border-top-style="solid" border-top-width="1pt" border-top-color="#4472c4"
       border-bottom-style="solid" border-bottom-width="1pt" border-bottom-color="#4472c4"

@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:math="http://www.w3.org/2005/xpath-functions/math"
+    xmlns:o="http://csrc.nist.gov/ns/oscal/1.0"
     xmlns="http://www.w3.org/1999/xhtml"
     xpath-default-namespace="http://csrc.nist.gov/ns/oscal/1.0"
     exclude-result-prefixes="xs math"
@@ -48,10 +49,26 @@
     <xsl:template name="make-resource-table">
         <table class="resources">
             <xsl:apply-templates select="resource">
-                <xsl:sort select="title" order="ascending"/>
+                <xsl:sort select="title/string() => o:zero-pad()" order="ascending"/>
             </xsl:apply-templates>
         </table>
     </xsl:template>
+    
+    <!-- Pads numeric substrings with zeroes to five (5) digits -->
+    <xsl:function name="o:zero-pad" as="xs:string">
+        <xsl:param name="n" as="xs:string"/>
+        <xsl:variable name="padstr" select="'00000'"/>
+        <xsl:value-of><!-- the instruction delivers a single text node, castable to a string -->
+            <xsl:analyze-string select="$n" regex="\d+">
+                <xsl:matching-substring>
+                    <xsl:value-of select="number(.) => format-number($padstr)"/>
+                </xsl:matching-substring>
+                <xsl:non-matching-substring>
+                    <xsl:value-of select="."/>
+                </xsl:non-matching-substring>
+            </xsl:analyze-string>
+        </xsl:value-of>
+    </xsl:function>
     
     <xsl:template match="resource[empty(citation)]">
         <xsl:message expand-text="true">dropping resource { title }</xsl:message>
